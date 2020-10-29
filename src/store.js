@@ -1,25 +1,8 @@
 const STORE = {
-    bookmarks: [
-        {
-            id: 'c137',
-            title: 'Google',
-            rating: 5,
-            url: 'https://www.google.com/',
-            description: `lorem ipsum`,
-            expanded: false,
-        },
-        {
-            id: 'c138',
-            title: 'Doggy',
-            rating: 3,
-            url: 'https://www.doggy.com/',
-            description: `lorem ipsum`,
-            expanded: false,
-        }
-    ],
+    bookmarks: [],
     editing: false,
     target: '',
-    filter: 0
+    filter: 1
 };
 
 function status() {
@@ -30,18 +13,22 @@ function status() {
     }
 }
 
+function setFilterLevel(level) {
+    STORE.filter = level;
+}
+
 // ----- Bookmark functions -----
 
 function getBookmarks() {
-    return STORE.bookmarks
+    return STORE.bookmarks;
 }
 
-function findBookmarkById(id) {
+function findById(id) {
     return STORE.bookmarks.find((itm) => itm.id === id);
 }
 
 function toggleExpanded(id) {
-    this.findBookmarkById(id).expanded = !this.findBookmarkById(id).expanded;
+    this.findById(id).expanded = !this.findById(id).expanded;
 }
 
 function editBookmark(id) {
@@ -50,7 +37,7 @@ function editBookmark(id) {
 }
 
 function getCurrentEditTarget() {
-    return this.findBookmarkById(this.STORE.target);
+    return this.findById(this.STORE.target);
 }
 
 function stopEdit() {
@@ -59,7 +46,20 @@ function stopEdit() {
 }
 
 function updateCurrentTarget(newObj) {
-    Object.assign(this.findBookmarkById(STORE.target), newObj);
+    Object.assign(this.findById(STORE.target), newObj);
+}
+
+function addBookmark(obj) {
+    STORE.bookmarks.push(obj);
+    this.findById(obj.id).expanded = false;
+}
+
+function addListOfBookmarks(list) {
+    for(let item of list) {
+        let itm = item;
+        itm.expanded = false;
+        this.addBookmark(itm);
+    }
 }
 
 // ----- Exports -----
@@ -67,11 +67,15 @@ function updateCurrentTarget(newObj) {
 export default {
     STORE,
     status,
+    setFilterLevel,
     getBookmarks,
-    findBookmarkById,
+    findBookmarkById: findById,
+    findById,
     toggleExpanded,
     editBookmark,
     getCurrentEditTarget,
     stopEdit,
-    updateCurrentTarget
+    updateCurrentTarget,
+    addBookmark,
+    addListOfBookmarks
 };

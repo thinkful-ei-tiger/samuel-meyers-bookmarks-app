@@ -2,6 +2,7 @@ import $ from 'jquery';
 
 import store from './store';
 import temp from './templates';
+import api from './api';
 
 $.fn.extend({
     serializeJson: function() {
@@ -21,6 +22,7 @@ $.fn.extend({
 function render() {
     switch(store.status()) {
         case 'list':
+            console.log(temp.bookmarkListHome());
             $('.main').html(temp.bookmarkListHome());
             break;
         case 'editing':
@@ -36,7 +38,6 @@ function handleBookmarkClicked() {
     $('.main').on('click', '.bookmark', function(evt) {
         if(!store.STORE.editing) {
             let id = $(this).data('item-id');
-            console.log("Bookmark clicked:",id);
             store.toggleExpanded(id);
             render();
         }
@@ -63,8 +64,39 @@ function handleSubmitClicked() {
     $('.main').on('click', '.submitEdit', function(evt) {
         evt.preventDefault();
         let newObj = $('.editform').extractForm();
-        store.updateCurrentTarget(newObj);
-        store.stopEdit();
+        let id = $(this).data('item-id');
+        let sendObj = {
+            title: newObj.title,
+            rating: parseInt(newObj.rating),
+            desc: newObj.description,
+            url: newObj.url
+        }
+        console.log(sendObj);
+        api.editBookmark(id, sendObj).then((data) => {
+            //store.updateCurrentarget();
+            api.getAllBookmarks().then((data) => {
+                store.STORE.bookmarks = [];
+                store.addListOfBookmarks(data);
+                store.stopEdit();
+                render();
+            })
+        });
+    });
+}
+
+function handleNewClicked() {
+    $('.main').on('click', '.addbutton', function(evt) {
+        api.addNewBookmark("bookmark", "http://example.com").then((item) => {
+            store.addBookmark(item);
+            store.editBookmark(item.id);
+            render();
+        });
+    });
+}
+
+function handleSelectChanged() {
+    $('.main').on('click', '.selectfilter', function(evt) {
+        store.setFilterLevel($(this).val());
         render();
     });
 }
@@ -74,6 +106,8 @@ function setupEventHandlers() {
     handleGotoClicked();
     handleEditClicked();
     handleSubmitClicked();
+    handleNewClicked();
+    handleSelectChanged();
 }
 
 export default {
