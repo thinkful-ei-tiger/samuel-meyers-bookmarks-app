@@ -24,8 +24,15 @@ function editBookmark(id, bookmark) {
     }).then(response => response.json());
 }
 
+function deleteBookmark(id) {
+    return fetch(url+"/"+id, {
+        method: 'DELETE',
+    });
+}
+
 export default {
     addNewBookmark,
     getAllBookmarks,
-    editBookmark
+    editBookmark,
+    deleteBookmark
 }

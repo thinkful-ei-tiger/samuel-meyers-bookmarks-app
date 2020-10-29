@@ -1,12 +1,10 @@
-const STORE = {
-    bookmarks: [],
-    editing: false,
-    target: '',
-    filter: 1
-};
+let bookmarks = [];
+let editing = false;
+let target = '';
+let filter = 1;
 
 function status() {
-    if(STORE.editing) {
+    if(this.editing) {
         return 'editing'; 
     } else {
         return 'list';
@@ -14,17 +12,17 @@ function status() {
 }
 
 function setFilterLevel(level) {
-    STORE.filter = level;
+    this.filter = level;
 }
 
 // ----- Bookmark functions -----
 
 function getBookmarks() {
-    return STORE.bookmarks;
+    return this.bookmarks;
 }
 
 function findById(id) {
-    return STORE.bookmarks.find((itm) => itm.id === id);
+    return this.bookmarks.find((itm) => itm.id === id);
 }
 
 function toggleExpanded(id) {
@@ -32,25 +30,25 @@ function toggleExpanded(id) {
 }
 
 function editBookmark(id) {
-    STORE.editing = true;
-    STORE.target = id;
+    this.editing = true;
+    this.target = id;
 }
 
 function getCurrentEditTarget() {
-    return this.findById(this.STORE.target);
+    return this.findById(this.target);
 }
 
 function stopEdit() {
-    STORE.editing = false;
-    STORE.target = '';
+    this.editing = false;
+    this.target = '';
 }
 
 function updateCurrentTarget(newObj) {
-    Object.assign(this.findById(STORE.target), newObj);
+    Object.assign(this.findById(this.target), newObj);
 }
 
 function addBookmark(obj) {
-    STORE.bookmarks.push(obj);
+    this.bookmarks.push(obj);
     this.findById(obj.id).expanded = false;
 }
 
@@ -65,7 +63,10 @@ function addListOfBookmarks(list) {
 // ----- Exports -----
 
 export default {
-    STORE,
+    bookmarks,
+    editing,
+    target,
+    filter,
     status,
     setFilterLevel,
     getBookmarks,

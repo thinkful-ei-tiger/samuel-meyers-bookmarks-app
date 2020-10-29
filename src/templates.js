@@ -1,7 +1,7 @@
 import store from './store';
 
 function bookmarkItem(item) {
-    if(store.STORE.filter <= item.rating) {
+    if(store.filter <= item.rating) {
     
         let source = `<div class="bookmark flexbox" data-item-id="${item.id}">
             <h3>${item.title}</h3><div>`;
@@ -22,14 +22,14 @@ function bookmarkItem(item) {
 }
 
 function bookmarkListHome() {
-    let items = store.STORE.bookmarks;
+    let items = store.bookmarks;
     let source = `<div class="card flexbox">
     <div>
     <button class="addbutton">+ New</button>
     <select class="selectfilter">`;
     for(let i = 1; i <=5; i++) {
         source += `<option value="${i}" `;
-        if(i == store.STORE.filter) {
+        if(i == store.filter) {
             source += "selected";
         }
         source += `>${i}</option>`
@@ -63,6 +63,7 @@ function bookmarkEditItem(item) {
             <label for="description">Description: </label>
             <textarea name="description">${item.desc}</textarea>
             <button class="submitEdit" data-item-id="${item.id}">Submit</button>
+            <button class="delete" data-item-id="${item.id}">Delete</button>
     </form>`;
     return source;
 }

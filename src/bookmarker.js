@@ -22,11 +22,10 @@ $.fn.extend({
 function render() {
     switch(store.status()) {
         case 'list':
-            console.log(temp.bookmarkListHome());
             $('.main').html(temp.bookmarkListHome());
             break;
         case 'editing':
-            console.log("Editing ",store.getCurrentEditTarget() )
+            //console.log("Editing ",store.getCurrentEditTarget() )
             $('.main').html(temp.bookmarkEditItem(store.getCurrentEditTarget()));
             break;
         default:
@@ -34,9 +33,18 @@ function render() {
     }
 }
 
+function refresh(callback=function(){}) {
+    api.getAllBookmarks().then((data) => {
+        store.bookmarks = [];
+        store.addListOfBookmarks(data);
+        callback();
+        render();
+    })
+}
+
 function handleBookmarkClicked() {
     $('.main').on('click', '.bookmark', function(evt) {
-        if(!store.STORE.editing) {
+        if(!store.editing) {
             let id = $(this).data('item-id');
             store.toggleExpanded(id);
             render();
@@ -56,6 +64,8 @@ function handleEditClicked() {
         let id = $(this).data('item-id');
         console.log(id);
         store.editBookmark(id);
+        console.log(store.status())
+        console.log(store.target);
         render();
     });
 }
@@ -74,12 +84,9 @@ function handleSubmitClicked() {
         console.log(sendObj);
         api.editBookmark(id, sendObj).then((data) => {
             //store.updateCurrentarget();
-            api.getAllBookmarks().then((data) => {
-                store.STORE.bookmarks = [];
-                store.addListOfBookmarks(data);
+            refresh(function() {
                 store.stopEdit();
-                render();
-            })
+            });
         });
     });
 }
@@ -101,6 +108,20 @@ function handleSelectChanged() {
     });
 }
 
+function handleDeleteClicked() {
+    $('.main').on('click', '.delete', function(evt) {
+        evt.preventDefault();
+        let id = $(this).data('item-id');
+        api.deleteBookmark(id).then((resp) => {
+            console.log("THEN");
+            refresh(function() {
+                store.stopEdit();
+            });
+            render();
+        });
+    })
+}
+
 function setupEventHandlers() {
     handleBookmarkClicked();
     handleGotoClicked();
@@ -108,6 +129,7 @@ function setupEventHandlers() {
     handleSubmitClicked();
     handleNewClicked();
     handleSelectChanged();
+    handleDeleteClicked();
 }
 
 export default {
