@@ -1,4 +1,4 @@
-const url = "http://thinkful-list-api.herokuapp.com/samuel-meyers/bookmarks";
+const url = "https://thinkful-list-api.herokuapp.com/samuel-meyers/bookmarks";
 
 function addNewBookmark(title, uurl) {
     return fetch(url, {
