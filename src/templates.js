@@ -43,13 +43,13 @@ function bookmarkListHome() {
     return source;
 }
 
-function bookmarkEditItem(item) {
+function bookmarkEditItem(item, adding) {
     let source = `<div class="bookmark flexbox">
         <form class="flexbox editform">
             <label for="title">Title: </label>
-            <input name="title" id="title" value="${item.title}"/>
+            <input name="title" id="title" value="${item.title}" required>
             <label for="rating">Rating: </label>
-            <select name="rating" id="rating">`
+            <select name="rating" id="rating" required>`
     for(let i = 1; i <= 5; i++) {
         source += `<option value="${i}" `;
         if(i == item.rating) {
@@ -59,17 +59,30 @@ function bookmarkEditItem(item) {
     }
     source += `</select>
             <label for="url">URL: </label>
-            <input name="url" id="url" value="${item.url}"/>
+            <input name="url" id="url" value="${item.url}" required>
             <label for="description">Description: </label>
-            <textarea name="description">${item.desc}</textarea>
-            <button class="submitEdit" data-item-id="${item.id}">Submit</button>
-            <button class="delete" data-item-id="${item.id}">Delete</button>
-    </form>`;
+            <textarea name="description" required>${item.desc}</textarea>`;
+    if(adding) {
+        source += `<button class="additem">Create Bookmark</button>`;
+    } else {
+        source += `<button class="submitEdit" data-item-id="${item.id}">Submit</button>
+            <button class="delete" data-item-id="${item.id}">Delete</button>`;
+    }
+    
+    source += `</form>`;
     return source;
+}
+
+function errorMessage(message) {
+    return `<div class="card">
+    <p>${message}</p>
+    <button class="closemessage">Back</button>
+    </div>`;
 }
 
 export default {
     bookmarkItem,
     bookmarkListHome,
-    bookmarkEditItem
+    bookmarkEditItem,
+    errorMessage
 }

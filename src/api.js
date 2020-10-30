@@ -1,12 +1,12 @@
 const url = "https://thinkful-list-api.herokuapp.com/samuel-meyers/bookmarks";
 
-function addNewBookmark(title, uurl) {
+function addNewBookmark(title, uurl, rating, desc) {
     return fetch(url, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({title: title, url: uurl, rating: 5})
+        body: JSON.stringify({title: title, url: uurl, rating, desc})
     }).then(response => response.json());
 }
 

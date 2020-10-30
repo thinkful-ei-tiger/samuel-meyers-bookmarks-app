@@ -2,9 +2,17 @@ let bookmarks = [];
 let editing = false;
 let target = '';
 let filter = 1;
+let adding = false;
+let message = "";
 
 function status() {
-    if(this.editing) {
+    if(this.message) {
+        return 'message';
+    }
+    else if (this.editing && this.adding) {
+        return 'adding';
+    }
+    else if(this.editing && !this.adding) {
         return 'editing'; 
     } else {
         return 'list';
@@ -13,6 +21,17 @@ function status() {
 
 function setFilterLevel(level) {
     this.filter = level;
+}
+
+function pushMessage(msg)
+{
+    this.message = msg;
+}
+
+function displayMessage() {
+    let msg = this.message;
+    this.message = "";
+    return msg;
 }
 
 // ----- Bookmark functions -----
@@ -60,11 +79,30 @@ function addListOfBookmarks(list) {
     }
 }
 
+function addMode() {
+    this.adding = true;
+    this.editing = true;
+    this.bookmarks.push({
+        id: '_tmp_adding',
+        title: '',
+        rating: 1,
+        url: '',
+        desc: '',
+    });
+    this.target = '_tmp_adding';
+}
+
+function endAdd() {
+    this.editing = false;
+    this.adding = false;
+}
+
 // ----- Exports -----
 
 export default {
     bookmarks,
     editing,
+    adding,
     target,
     filter,
     status,
@@ -78,5 +116,9 @@ export default {
     stopEdit,
     updateCurrentTarget,
     addBookmark,
-    addListOfBookmarks
+    addListOfBookmarks,
+    pushMessage,
+    displayMessage,
+    addMode,
+    endAdd
 };
