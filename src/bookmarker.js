@@ -159,7 +159,7 @@ function setupEventHandlers() {
     handleEditClicked();
     handleSubmitClicked();
     handleNewClicked();
-    handleSelectChanged();
+    handleSelectChanged(); 
     handleDeleteClicked();
     handleAddClicked();
     handleCloseMessage();
