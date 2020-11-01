@@ -3,7 +3,7 @@ import store from './store';
 function bookmarkItem(item) {
     if(store.filter <= item.rating) {
     
-        let source = `<div class="bookmark flexbox" data-item-id="${item.id}">
+        let source = `<div class="bookmark flexbox" data-item-id="${item.id}" tabindex="0">
             <h3>${item.title}</h3><div>`;
         for(let i = 0; i < item.rating; i++) {
             source += `<i class="fas fa-star"></i>`;
@@ -43,9 +43,14 @@ function bookmarkListHome() {
     return source;
 }
 
-function bookmarkEditItem(item, adding) {
-    let source = `<div class="bookmark flexbox">
-        <form class="flexbox editform">
+function bookmarkEditItem(item, adding, message='') {
+    let source = `<div class="bookmark flexbox">`;
+    console.log("message is",store.message);
+    console.log(message);
+    if(store.hasMessage()) {
+        source += `<p>${store.displayMessage()}</p>`;
+    }
+    source += `<form class="flexbox editform">
             <label for="title">Title: </label>
             <input name="title" id="title" value="${item.title}" required>
             <label for="rating">Rating: </label>

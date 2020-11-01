@@ -19,22 +19,20 @@ $.fn.extend({
     }
 });
 
-function render() {
+function render(message = '') {
+    console.log(store.status())
     switch(store.status()) {
         case 'list':
             console.log('listing bookmarks');
-            $('.main').html(temp.bookmarkListHome());
+            $('main').html(temp.bookmarkListHome());
             break;
         case 'editing':
             console.log('editing', store.getCurrentEditTarget())
-            $('.main').html(temp.bookmarkEditItem(store.getCurrentEditTarget(), false));
+            $('main').html(temp.bookmarkEditItem(store.getCurrentEditTarget(), false, message));
             break;
         case 'adding':
             console.log('adding new bookmark');
-            $('.main').html(temp.bookmarkEditItem(store.getCurrentEditTarget(), true));
-            break;
-        case 'message':
-            $('.main').html(temp.errorMessage(store.displayMessage()));
+            $('main').html(temp.bookmarkEditItem(store.getCurrentEditTarget(), true, message));
             break;
         default:
             break;
@@ -51,7 +49,14 @@ function refresh(callback=function(){}) {
 }
 
 function handleBookmarkClicked() {
-    $('.main').on('click', '.bookmark', function(evt) {
+    $('main').on('keypress', '.bookmark', function(evt) {
+        if(!store.editing) {
+            let id = $(this).data('item-id');
+            store.toggleExpanded(id);
+            render();
+        }
+    });
+    $('main').on('click', '.bookmark', function(evt) {
         if(!store.editing) {
             let id = $(this).data('item-id');
             store.toggleExpanded(id);
@@ -61,14 +66,14 @@ function handleBookmarkClicked() {
 }
 
 function handleGotoClicked() {
-    $('.main').on('click', '.goto', function(evt) {
+    $('main').on('click', '.goto', function(evt) {
         let url = $(this).data('url');
         window.open(url, '_blank');
     });
 }
 
 function handleEditClicked() {
-    $('.main').on('click', '.edit', function(evt) {
+    $('main').on('click', '.edit', function(evt) {
         let id = $(this).data('item-id');
         store.editBookmark(id);
         render();
@@ -76,7 +81,7 @@ function handleEditClicked() {
 }
 
 function handleSubmitClicked() {
-    $('.main').on('click', '.submitEdit', function(evt) {
+    $('main').on('click', '.submitEdit', function(evt) {
         evt.preventDefault();
         let newObj = $('.editform').extractForm();
         let id = $(this).data('item-id');
@@ -90,20 +95,14 @@ function handleSubmitClicked() {
             //store.updateCurrentarget();
             refresh(function() {
                 store.stopEdit();
+                render();
             });
         });
     });
 }
 
 function handleNewClicked() {
-    $('.main').on('click', '.addbutton', function(evt) {
-        /*
-        api.addNewBookmark("bookmark", "http://example.com").then((item) => {
-            store.addBookmark(item);
-            store.editBookmark(item.id);
-            render();
-        });
-        */
+    $('main').on('click', '.addbutton', function(evt) {
        store.addMode();
        render();
 
@@ -111,30 +110,37 @@ function handleNewClicked() {
 }
 
 function handleAddClicked() {
-    $('.main').on('click', '.additem', function(evt) {
+    $('main').on('click', '.additem', function(evt) {
         evt.preventDefault();
         let newObj = $('.editform').extractForm();
         if(!newObj.title || !newObj.rating ||!newObj.description || !newObj.url) {
             store.pushMessage("Must enter all required fields");
+            console.log("Incomplete submission:",store.message);
             render();
+            return;
         }
+        console.log(newObj);
         api.addNewBookmark(newObj.title, newObj.url, parseInt(newObj.rating), newObj.description).then((item) => {
             refresh(function() {
                 store.endAdd();
             });
-        }).catch(error => {store.pushMessage(error);render()});
+        }).catch(error => {
+            console.log(error);
+            store.pushMessage(error);
+            render()}
+        );
     });
 }
 
 function handleSelectChanged() {
-    $('.main').on('click', '.selectfilter', function(evt) {
+    $('main').on('click', '.selectfilter', function(evt) {
         store.setFilterLevel($(this).val());
         render();
     });
 }
 
 function handleDeleteClicked() {
-    $('.main').on('click', '.delete', function(evt) {
+    $('main').on('click', '.delete', function(evt) {
         evt.preventDefault();
         let id = $(this).data('item-id');
         api.deleteBookmark(id).then((resp) => {
@@ -147,7 +153,7 @@ function handleDeleteClicked() {
 }
 
 function handleCloseMessage() {
-    $('.main').on('click', '.closemessage', function(evt) {
+    $('main').on('click', '.closemessage', function(evt) {
         store.message = "";
         render();
     });

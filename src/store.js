@@ -6,10 +6,7 @@ let adding = false;
 let message = "";
 
 function status() {
-    if(this.message) {
-        return 'message';
-    }
-    else if (this.editing && this.adding) {
+    if (this.editing && this.adding) {
         return 'adding';
     }
     else if(this.editing && !this.adding) {
@@ -26,6 +23,10 @@ function setFilterLevel(level) {
 function pushMessage(msg)
 {
     this.message = msg;
+}
+
+function hasMessage() {
+    return this.message !== "";
 }
 
 function displayMessage() {
@@ -105,6 +106,7 @@ export default {
     adding,
     target,
     filter,
+    message,
     status,
     setFilterLevel,
     getBookmarks,
@@ -120,5 +122,6 @@ export default {
     pushMessage,
     displayMessage,
     addMode,
-    endAdd
+    endAdd,
+    hasMessage
 };
