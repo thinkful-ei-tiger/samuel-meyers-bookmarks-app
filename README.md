@@ -1,5 +1,9 @@
 # https://thinkful-ei-tiger.github.io/samuel-meyers-bookmarks-app/
 
+
+This is a simple app that allows you to organize bookmarks, similar to the bookmarks bar found on many popular web browsers, but more intuitive and less integrated.
+
+
 1. I can add bookmarks to my bookmarks list. Bookmarks contain:
   * title
   * url link
