@@ -48,6 +48,30 @@ function refresh(callback=function(){}) {
     })
 }
 
+function handleGotoClicked() {
+    $('main').on('click', '.goto', function(evt) {
+        let url = $(this).data('url');
+        window.open(url, '_blank');
+    });
+    $('main').on('keypress', '.goto', function(evt) {
+        let url = $(this).data('url');
+        window.open(url, '_blank');
+    });
+}
+
+function handleEditClicked() {
+    $('main').on('click', '.edit', function(evt) {
+        let id = $(this).data('item-id');
+        store.editBookmark(id);
+        render();
+    });
+    $('main').on('keypress', '.edit', function(evt) {
+        let id = $(this).data('item-id');
+        store.editBookmark(id);
+        render();
+    });
+}
+
 function handleBookmarkClicked() {
     $('main').on('keypress', '.bookmark', function(evt) {
         if(!store.editing) {
@@ -62,21 +86,6 @@ function handleBookmarkClicked() {
             store.toggleExpanded(id);
             render();
         }
-    });
-}
-
-function handleGotoClicked() {
-    $('main').on('click', '.goto', function(evt) {
-        let url = $(this).data('url');
-        window.open(url, '_blank');
-    });
-}
-
-function handleEditClicked() {
-    $('main').on('click', '.edit', function(evt) {
-        let id = $(this).data('item-id');
-        store.editBookmark(id);
-        render();
     });
 }
 
