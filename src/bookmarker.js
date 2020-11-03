@@ -48,6 +48,22 @@ function refresh(callback=function(){}) {
     })
 }
 
+function pushBookmarkError(message) {
+    store.pushMessage(message);
+    console.log("Incomplete submission:",store.message);
+    render();
+}
+
+function validURL(str) {
+    var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+      '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+      '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+      '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+    return !!pattern.test(str);
+  }
+
 function handleGotoClicked() {
     $('main').on('click', '.goto', function(evt) {
         let url = $(this).data('url');
@@ -93,6 +109,28 @@ function handleSubmitClicked() {
     $('main').on('click', '.submitEdit', function(evt) {
         evt.preventDefault();
         let newObj = $('.editform').extractForm();
+        
+        if(!newObj.title) {
+            pushBookmarkError("Must enter a title");
+            return;
+        }
+        if(!newObj.rating) {
+            pushBookmarkError("Must enter a rating");
+            return;
+        }
+        if(!newObj.url) {
+            pushBookmarkError("Must enter a URL");
+            return;
+        }
+        if(!validURL(newObj.url)) {
+            pushBookmarkError("Invalid URL");
+            return;
+        }
+        if(!newObj.description) {
+            pushBookmarkError("Must enter a description");
+            return;
+        }
+        
         let id = $(this).data('item-id');
         let sendObj = {
             title: newObj.title,
@@ -122,12 +160,33 @@ function handleAddClicked() {
     $('main').on('click', '.additem', function(evt) {
         evt.preventDefault();
         let newObj = $('.editform').extractForm();
-        if(!newObj.title || !newObj.rating ||!newObj.description || !newObj.url) {
+        if(!newObj.title) {
+            pushBookmarkError("Must enter a title");
+            return;
+        }
+        if(!newObj.rating) {
+            pushBookmarkError("Must enter a rating");
+            return;
+        }
+        if(!newObj.url) {
+            pushBookmarkError("Must enter a URL");
+            return;
+        }
+        if(!validURL(newObj.url)) {
+            pushBookmarkError("Invalid URL");
+            return;
+        }
+        if(!newObj.description) {
+            pushBookmarkError("Must enter a description");
+            return;
+        }
+        
+        /*|| !newObj.rating ||!newObj.description || !newObj.url) {
             store.pushMessage("Must enter all required fields");
             console.log("Incomplete submission:",store.message);
             render();
             return;
-        }
+        }*/
         console.log(newObj);
         api.addNewBookmark(newObj.title, newObj.url, parseInt(newObj.rating), newObj.description).then((item) => {
             refresh(function() {
